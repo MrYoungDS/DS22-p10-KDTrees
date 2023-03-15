@@ -1,19 +1,44 @@
 plugins {
     id 'java'
+    id 'checkstyle'
 }
+
+checkstyleTest.enabled = false
 
 group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    //jcenter()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    // Add jar files to compile java code
+    implementation fileTree(dir: 'libs', include: '*.jar')
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 test {
     useJUnitPlatform()
+}
+
+// set checkstyleMain to look in the java folder
+checkstyleMain {
+    source = fileTree('src/main/java')
+}
+
+tasks.withType(Checkstyle) {
+    exclude 'KdTreeGenerator.java'
+    exclude 'KdTreeVisualizer.java'
+    exclude 'NearestNeighborVisualizer.java'
+    exclude 'RangeSearchVisualizer.java'
+}
+
+checkstyle {
+    ignoreFailures = true
+    configFile = file('config/checkstyle/checkstyle.xml')
+    toolVersion = "8.1"   // set Checkstyle version here
 }
